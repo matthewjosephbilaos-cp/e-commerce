@@ -1,0 +1,106 @@
+#!/bin/bash
+
+# Default value for CONTAINER_ROLE is set to "web" but can be overridden by environment variable
+CONTAINER_ROLE=${CONTAINER_ROLE:-web}
+echo "Container role: ${CONTAINER_ROLE}"
+
+if [ ! -f ".env" ]; then
+    cp .env.example .env
+    echo "env file created."
+else
+    echo "env file exists."
+fi
+
+# Check if XDEBUG_ENABLE is set to "true"
+if [ "$XDEBUG_ENABLED" = "true" ]; then
+    mv /usr/local/etc/php/conf.d/xdebug.ini.disabled /usr/local/etc/php/conf.d/xdebug.ini
+    # check if XDEBUG_MODE exists and replace xdebug.mode with its value
+    if [ -n "${XDEBUG_MODE}" ]; then
+        sed -i "s/xdebug.mode=develop/xdebug.mode=${XDEBUG_MODE}/g" /usr/local/etc/php/conf.d/xdebug.ini
+    fi
+    docker-php-ext-enable xdebug pcov
+else
+    # Disable Xdebug
+    [ -f /usr/local/etc/php/conf.d/xdebug.ini ] && mv /usr/local/etc/php/conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini.disabled
+fi
+
+# Run composer install
+echo "Running composer install.."
+composer config http-basic.nova.laravel.com chris.bautista@coreproc.ph xsCQxO0h6C0vAtSfHBSUGEWrntXn3JazOlvzxzDRxHRr3uAdky
+composer install --no-ansi --no-interaction --no-progress --optimize-autoloader
+
+# Check if APP_KEY is set and is not empty
+if grep -q "^APP_KEY=" .env && grep -q "^APP_KEY=.*[^ ]" .env; then
+    echo "APP_KEY is set."
+else
+    php artisan key:generate
+fi
+
+echo "Running artisan commands.."
+
+php artisan clear
+php artisan optimize:clear
+
+# Only web containers can migrate
+if [ "$CONTAINER_ROLE" == "web" ]; then
+    echo "Migration type: ${CI_MIGRATION_TYPE}}"
+    if [[ $CI_MIGRATION_TYPE == "migrate-fresh-seed" ]]; then
+        echo "Migrating fresh and seeding.."
+        php artisan migrate:fresh --seed --no-interaction
+    else
+        echo "Migrating database.."
+        php artisan migrate --force
+    fi
+fi
+
+# Link storage folder.
+php artisan storage:link
+
+# Fix files ownership.
+chown -R www-data:www-data .
+mkdir -p /var/www/.composer
+chown -R www-data:www-data /var/www/.composer
+
+mkdir -p /var/www/.npm
+chown -R www-data:www-data /var/www/.npm
+
+echo "Building assets.."
+su -s /bin/bash -c 'npm install' www-data
+su -s /bin/bash -c 'npm run build' www-data
+
+## Set correct permission.
+chmod -R 775 /app/storage
+chmod -R 775 /app/storage/logs
+chmod -R 775 /app/storage/framework
+chmod -R 775 /app/storage/framework/sessions
+chmod -R 775 /app/bootstrap
+chmod -R 775 /app/bootstrap/cache
+
+# Send a notification to CoreProc's NTFY server.
+if [ -n "${CI_NTFY_USERNAME}" ] && [ -n "${CI_NTFY_PASSWORD}" ] && [ -n "${CI_NTFY_URL}" ]; then
+    echo "Sending notification to ${CI_NTFY_URL}.."
+    curl \
+        -u "${CI_NTFY_USERNAME}":"${CI_NTFY_PASSWORD}" \
+        -H "Click: ${APP_URL:-default_url}" \
+        -H "Title: Deployment Completed" \
+        -d "Deployment has completed in ${APP_URL:-default_url}" \
+        "${CI_NTFY_URL}"
+else
+    echo "No notification sent."
+fi
+
+# Check the value and execute commands accordingly
+
+if [ "$CONTAINER_ROLE" == "job" ]; then
+    echo "Running cronjob.."
+    crontab -u www-data /etc/cron.d/laravel-scheduler
+    printenv >> /etc/environment && cron -L 15 &
+    echo "Running supervisor.."
+    supervisord -c /etc/supervisor/supervisord.conf
+fi
+
+if [ "$CONTAINER_ROLE" == "web" ]; then
+    echo "Running PHP-FPM and Nginx.."
+    php-fpm -D
+    nginx -g "daemon off;"
+fi

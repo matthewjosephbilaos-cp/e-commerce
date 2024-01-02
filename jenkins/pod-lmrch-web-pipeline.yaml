@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+spec:
+  serviceAccountName: jenkins
+  containers:
+    - name: lmrch-web
+      image: art.pmideep.com/lmrch-docker-dev/lmrch-web:pipeline
+      imagePullPolicy: Always
+      resources:
+        requests:
+          cpu: 1000m
+          memory: 2Gi
+        limits:
+          cpu: 1000m
+          memory: 2Gi
+      tty: true
+      env:
+        - name: APP_ENV
+          value: testing
+        - name: XDEBUG_ENABLED
+          value: 'true'
+        - name: XDEBUG_MODE
+          value: coverage
+  imagePullSecrets: [ 'artifactory-lmrch-dev' ]

@@ -1,0 +1,25 @@
+pipeline {
+    environment {
+        ARTIFACTORY_DOCKER_REGISTRY = "art.pmideep.com/lmrch-docker-dev"
+        ARTIFACTORY_DOCKER_REPO = "lmrch-web"
+        IMAGE_TAG = "${ARTIFACTORY_DOCKER_REGISTRY}/${ARTIFACTORY_DOCKER_REPO}:${TAG}"
+    }
+    agent {
+        kubernetes {
+            label 'lmrch-web-build'
+            yamlFile './jenkins/pod-kaniko.yaml'
+        }
+    }
+    stages {
+        stage ('Build Docker Image') {
+            steps {
+                container('kaniko') {
+                    sh '''
+                    echo ${WORKSPACE}
+                    /kaniko/executor -f ${WORKSPACE}/Dockerfile -c ${WORKSPACE} --force --destination=${IMAGE_TAG}
+                    '''
+                }
+            }
+        }
+    }
+}

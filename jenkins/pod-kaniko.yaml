@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+spec:
+  serviceAccountName: jenkins
+  containers:
+    - name: kaniko
+      image: art.pmideep.com/gcr/kaniko-project/executor:debug
+      resources:
+        requests:
+          cpu: 200m
+          memory: 1024Mi
+        limits:
+          cpu: 400m
+          memory: 1024Mi
+      command:
+        - /busybox/sh
+      tty: true
+      volumeMounts:
+        - name: jenkins-docker-cfg
+          mountPath: /kaniko/.docker
+  imagePullSecrets: [ 'artifactory-lmrch-dev' ]
+  volumes:
+    - name: jenkins-docker-cfg
+      projected:
+        sources:
+          - secret:
+              name: artifactory-lmrch-dev
+              items:
+                - key: .dockerconfigjson
+                  path: config.json
