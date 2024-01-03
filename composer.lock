@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e3aa02633750e9b0ba2dbd86cc3f263d",
+    "content-hash": "39aa9972697fb75c36c247f11860fc57",
     "packages": [
         {
             "name": "brick/math",
@@ -129,6 +129,49 @@
                 }
             ],
             "time": "2023-12-11T17:09:12+00:00"
+        },
+        {
+            "name": "coreproc/laravel-healthcheck",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CoreProc/laravel-healthcheck.git",
+                "reference": "d542a74844f6cf2fa7dd2fb7cbbe39087dab62a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CoreProc/laravel-healthcheck/zipball/d542a74844f6cf2fa7dd2fb7cbbe39087dab62a1",
+                "reference": "d542a74844f6cf2fa7dd2fb7cbbe39087dab62a1",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Coreproc\\LaravelHealthcheck\\HealthcheckServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Coreproc\\LaravelHealthcheck\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Bautista",
+                    "email": "chris.bautista@coreproc.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/CoreProc/laravel-healthcheck/issues",
+                "source": "https://github.com/CoreProc/laravel-healthcheck/tree/0.1.0"
+            },
+            "time": "2024-01-02T23:20:24+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
