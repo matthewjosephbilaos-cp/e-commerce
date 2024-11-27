@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\User;
+use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Database\Seeder;
@@ -28,6 +29,11 @@ class DatabaseSeeder extends Seeder
         if (Category::count() === 0) {
             $this->call(CategorySeeder::class);
         }
+
+        if (Brand::count() === 0) {
+            $this->call(BrandSeeder::class);
+        }
+
 
         if (Product::count() === 0) {
             $this->call(ProductSeeder::class);
