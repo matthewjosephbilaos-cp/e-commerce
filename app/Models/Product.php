@@ -16,6 +16,8 @@ class Product extends Model
         'quantity',
         'inStock',
         'published',
-        'price'
+        'price',
+        'image',
+        'url',
     ];
 }
