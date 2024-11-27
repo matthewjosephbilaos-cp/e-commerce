@@ -2,12 +2,13 @@
 
 namespace App\Nova;
 
+use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Text;
 use Illuminate\Validation\Rules;
 use Laravel\Nova\Fields\Gravatar;
-use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
-use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\UiAvatar;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class User extends Resource
