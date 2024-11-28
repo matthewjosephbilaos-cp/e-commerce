@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Order extends Model
+class Order extends Pivot
 {
     use HasFactory;
 
-    protected $table = 'orders';
+    protected $table = 'customer_product';
 
     protected $fillable = [
         'customer_id',
