@@ -38,6 +38,10 @@ class Product extends Resource
         'id', 'title', 'brand.title', 'category.title'
     ];
 
+    public static $with = [
+        'brand', 'category'
+    ];
+
     /**
      * Get the fields displayed by the resource.
      *
