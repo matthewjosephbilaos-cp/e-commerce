@@ -5,10 +5,13 @@ namespace App\Nova;
 use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Badge;
+use Laravel\Nova\Fields\Number;
 use Illuminate\Validation\Rules;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\UiAvatar;
 use Laravel\Nova\Fields\BelongsToMany;
+use App\Nova\Relationships\OrderFields;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Customer extends Resource
@@ -64,7 +67,9 @@ class Customer extends Resource
                 ->creationRules('required', Rules\Password::defaults())
                 ->updateRules('nullable', Rules\Password::defaults()),
 
-            BelongsToMany::make('Ordered Products', 'productsOrdered', resource: Product::class),
+            BelongsToMany::make('Ordered Products', 'productsOrdered', resource: Product::class)
+                ->fields(new OrderFields()),
+
         ];
     }
 

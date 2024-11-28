@@ -14,6 +14,7 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
+use App\Nova\Relationships\OrderFields;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Product extends Resource
@@ -109,24 +110,7 @@ class Product extends Resource
                 ->rules('nullable', 'url'),
 
             BelongsToMany::make('Product Customers', resource: Customer::class)
-                ->fields( fn () => [
-
-                    Number::make('Quantity')
-                        ->filterable()
-                        ->rules('required', 'integer'),
-
-                    Badge::make('Status')
-                        ->filterable()
-                        ->map([
-                            'Pending' => 'info',
-                            'Processing' => 'info',
-                            'Out For Delivery' => 'warning',
-                            'Delivered' => 'success',
-                            'Failed Delivery' => 'danger',
-                            'Cancelled' => 'danger'
-                        ])
-
-                ])
+                ->fields(new OrderFields()),
         ];
     }
 
