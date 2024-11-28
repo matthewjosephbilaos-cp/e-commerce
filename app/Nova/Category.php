@@ -7,6 +7,7 @@ use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Trix;
+use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -45,6 +46,11 @@ class Category extends Resource
     {
         return [
             ID::make()->sortable(),
+
+            Image::make('Image')
+                ->path('categories')
+                ->rules('nullable', 'mimes:png,jpg,jpeg')
+                ->showWhenPeeking()
 
             Text::make('Title')
                 ->showWhenPeeking()
