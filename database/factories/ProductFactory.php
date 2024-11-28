@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Brand;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,7 +18,11 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $brand_ids = Brand::pluck('id')->toArray();
+        $category_ids = Category::pluck('id')->toArray();
         return [
+            'category_id' => fake()->randomElement($category_ids),
+            'brand_id' => fake()->randomElement($brand_ids),
             'title' => fake()->unique()->realText(20),
             'quantity' => fake()->randomNumber(4),
             'description' => fake()->realText(),
