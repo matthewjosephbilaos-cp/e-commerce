@@ -2,15 +2,18 @@
 
 namespace App\Nova;
 
+use App\Nova\Customer;
 use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Trix;
+use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Product extends Resource
@@ -103,7 +106,27 @@ class Product extends Resource
             URL::make('Url')
                 ->displayUsing(fn ($value) => $value ? parse_url($value, PHP_URL_HOST): null)
                 ->hideFromIndex()
-                ->rules('nullable', 'url')
+                ->rules('nullable', 'url'),
+
+            BelongsToMany::make('Product Customers', resource: Customer::class)
+                ->fields( fn () => [
+
+                    Number::make('Quantity')
+                        ->filterable()
+                        ->rules('required', 'integer'),
+
+                    Badge::make('Status')
+                        ->filterable()
+                        ->map([
+                            'Pending' => 'info',
+                            'Processing' => 'info',
+                            'Out For Delivery' => 'warning',
+                            'Delivered' => 'success',
+                            'Failed Delivery' => 'danger',
+                            'Cancelled' => 'danger'
+                        ])
+
+                ])
         ];
     }
 
