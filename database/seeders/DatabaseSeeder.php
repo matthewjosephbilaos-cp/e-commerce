@@ -8,6 +8,7 @@ use App\Models\Brand;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Customer;
 use Illuminate\Database\Seeder;
 use Database\Seeders\ProductSeeder;
 use Illuminate\Support\Facades\Hash;
@@ -29,6 +30,10 @@ class DatabaseSeeder extends Seeder
 
         if(User::count() === 1) {
             $this->call(UserSeeder::class);
+        }
+
+        if(Customer::count() === 0) {
+            $this->call(CustomerSeeder::class);
         }
 
         if (Category::count() === 0) {
