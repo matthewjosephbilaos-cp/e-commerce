@@ -70,7 +70,7 @@ class Product extends Resource
                 ->sortable()
                 ->rules('required', 'integer', 'exists:brands,id'),
 
-            Trix::make('description')
+            Trix::make('Description')
                 ->hideFromIndex()
                 ->rules('required', 'string'),
 
