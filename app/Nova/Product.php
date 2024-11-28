@@ -51,7 +51,8 @@ class Product extends Resource
 
             Image::make('Image')
             ->path('products')
-            ->rules('image', 'mimes:png,jpg,jpeg,gif'),
+            ->rules('nullable', 'image', 'mimes:png,jpg,jpeg,gif')
+            ->help('Only png, jpg, and jpeg image extensions are accepted'),
 
             Text::make('Title')
                 ->sortable()

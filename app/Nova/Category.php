@@ -49,8 +49,9 @@ class Category extends Resource
 
             Image::make('Image')
                 ->path('categories')
-                ->rules('nullable', 'mimes:png,jpg,jpeg')
-                ->showWhenPeeking()
+                ->rules('nullable', 'image', 'mimes:png,jpg,jpeg')
+                ->help('Only png, jpg, and jpeg image extensions are accepted')
+                ->showWhenPeeking(),
 
             Text::make('Title')
                 ->showWhenPeeking()

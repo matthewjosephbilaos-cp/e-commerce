@@ -49,7 +49,8 @@ class Brand extends Resource
 
             Image::make('Image')
                 ->path('brands')
-                ->rules('nullable', 'mimes:png,jpg,jpeg')
+                ->rules('nullable', 'image', 'mimes:png,jpg,jpeg')
+                ->help('Only png, jpg, and jpeg image extensions are accepted')
                 ->showWhenPeeking(),
 
             Text::make('Title')
