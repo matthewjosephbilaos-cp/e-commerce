@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Brand extends Model
 {
@@ -14,5 +15,10 @@ class Brand extends Model
     protected $fillable = [
         'title',
         'description',
+        'image',
     ];
+
+    public function products() {
+        return $this->hasMany(Product::class);
+    }
 }

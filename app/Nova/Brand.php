@@ -2,10 +2,13 @@
 
 namespace App\Nova;
 
+use App\Nova\Brand;
 use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Trix;
+use Laravel\Nova\Fields\Image;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Brand extends Resource
@@ -44,13 +47,24 @@ class Brand extends Resource
         return [
             ID::make()->sortable(),
 
+            Image::make('Image')
+                ->path('brands')
+                ->rules('nullable', 'image', 'mimes:png,jpg,jpeg')
+                ->help('Only png, jpg, and jpeg image extensions are accepted')
+                ->showWhenPeeking(),
+
             Text::make('Title')
+                ->showWhenPeeking()
                 ->sortable()
                 ->required(),
 
             Trix::make('Description')
+                ->showWhenPeeking()
                 ->hideFromIndex()
-                ->required()
+                ->required(),
+
+
+            HasMany::make('Brands', resource: Brand::class),
         ];
     }
 

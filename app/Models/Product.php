@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Brand;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
@@ -20,4 +22,13 @@ class Product extends Model
         'image',
         'url',
     ];
+
+    public function brand() {
+        return $this->belongsTo(Brand::class);
+    }
+
+
+    public function category() {
+        return $this->belongsTo(Category::class);
+    }
 }

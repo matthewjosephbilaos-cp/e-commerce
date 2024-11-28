@@ -10,6 +10,7 @@ use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Product extends Resource
@@ -34,7 +35,11 @@ class Product extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title',
+        'id', 'title', 'brand.title', 'category.title'
+    ];
+
+    public static $with = [
+        'brand', 'category'
     ];
 
     /**
@@ -49,41 +54,56 @@ class Product extends Resource
             ID::make()->sortable(),
 
             Image::make('Image')
-            ->path('products'),
+            ->path('products')
+            ->rules('nullable', 'image', 'mimes:png,jpg,jpeg,gif')
+            ->help('Only png, jpg, and jpeg image extensions are accepted'),
 
             Text::make('Title')
                 ->sortable()
                 // ->showOnIndex( function (NovaRequest $request, $resource) {
                 //     return $this-> title === 'Five, who had not.';
                 // })
-                ->required(),
+                ->rules('required', 'string')
+                ->creationRules('unique:products,title')
+                ->updateRules('unique:products,title,{{resourceId}}'),
 
-            Trix::make('description')
-                ->hideFromIndex(),
+            BelongsTo::make('Category')
+                ->sortable()
+                ->rules('required', 'integer', 'exists:categories,id'),
+
+            BelongsTo::make('Brand')
+                ->sortable()
+                ->rules('required', 'integer', 'exists:brands,id'),
+
+            Trix::make('Description')
+                ->hideFromIndex()
+                ->rules('required', 'string'),
 
             Boolean::make('Stock', 'inStock')
                 ->filterable()
                 ->hideFromIndex()
-                ->required()
+                ->rules('required', 'boolean')
                 ->help('Whether the product has available stock'),
 
             Boolean::make('Published')
                 ->filterable()
                 ->hideFromIndex()
-                ->required()
+                ->rules('required', 'boolean')
                 ->help('Whether this product should be published'),
 
             Number::make('Quantity')
                 ->filterable()
-                ->required(),
+                ->rules('required', 'integer', 'min:1'),
 
             Number::make('Price')
                 ->step(0.01)
                 ->filterable()
-                ->required(),
+                ->rules('required', 'decimal:1,2', 'min:0.1'),
 
             URL::make('Url')
                 ->displayUsing(fn ($value) => $value ? parse_url($value, PHP_URL_HOST): null)
+                ->hideFromIndex()
+                ->rules('nullable', 'url')
         ];
     }
 
