@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Customer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,7 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
-        $customer_ids = User::pluck('id')->toArray();
+        $customer_ids = Customer::pluck('id')->toArray();
         $product_ids = Product::pluck('id')->toArray();
 
         return [
