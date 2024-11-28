@@ -5,6 +5,7 @@ namespace App\Nova;
 use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Order extends Resource
@@ -44,7 +45,18 @@ class Order extends Resource
             ID::make()->sortable(),
 
             Number::make('Quantity')
-                ->filterable()
+                ->filterable(),
+
+            Select::make('Status')
+                ->options([
+                    'Pending' => 'Pending',
+                    'Processing' => 'Processing',
+                    'Out For Delivery' => 'Out For Delivery',
+                    'Delivered' => 'Delivered',
+                    'Failed Delivery' => 'Failed Delivery',
+                    'Cancelled' => 'Cancelled'
+                ])
+
         ];
     }
 
