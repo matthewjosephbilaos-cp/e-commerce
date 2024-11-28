@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +21,8 @@ class Customer extends Model
     ];
 
     public function productsOrdered() : BelongsToMany {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class)
+            ->using(Order::class)
+            ->withPivot(['quantity', 'status']);
     }
 }
