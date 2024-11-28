@@ -25,6 +25,7 @@ class OrderFactory extends Factory
             'customer_id' => fake()->randomElement($customer_ids),
             'product_id' => fake()->randomElement($product_ids),
             'quantity' => fake()->randomNumber(4),
+            'status' => fake()->randomElement(['Pending', 'Processing', 'Out For Delivery', 'Delivered', 'Failed Delivery', 'Cancelled']),
         ];
     }
 }
