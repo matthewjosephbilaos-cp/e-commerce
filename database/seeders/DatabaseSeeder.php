@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\User;
 use App\Models\Brand;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Database\Seeder;
@@ -26,6 +27,10 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
+        if(User::count() === 1) {
+            $this->call(UserSeeder::class);
+        }
+
         if (Category::count() === 0) {
             $this->call(CategorySeeder::class);
         }
@@ -37,6 +42,10 @@ class DatabaseSeeder extends Seeder
 
         if (Product::count() === 0) {
             $this->call(ProductSeeder::class);
+        }
+
+        if (Order::count() === 0) {
+            $this->call(OrderSeeder::class);
         }
     }
 }
