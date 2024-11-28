@@ -2,10 +2,12 @@
 
 namespace App\Nova;
 
+use App\Nova\Product;
 use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Trix;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Category extends Resource
@@ -45,12 +47,16 @@ class Category extends Resource
             ID::make()->sortable(),
 
             Text::make('Title')
+                ->showWhenPeeking()
                 ->sortable()
                 ->required(),
 
             Trix::make('Description')
+                ->showWhenPeeking()
                 ->hideFromIndex()
-                ->required()
+                ->required(),
+
+            HasMany::make('Products', resource: Product::class)
 
 
         ];
