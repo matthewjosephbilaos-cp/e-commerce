@@ -2,7 +2,8 @@
 
 namespace App\Nova;
 
-use App\Nova\Brand;
+use App\Nova\Product;
+use App\Nova\Products;
 use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
@@ -64,7 +65,7 @@ class Brand extends Resource
                 ->required(),
 
 
-            HasMany::make('Brands', resource: Brand::class),
+            HasMany::make('Products', resource: Product::class),
         ];
     }
 
