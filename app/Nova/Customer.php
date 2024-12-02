@@ -5,21 +5,26 @@ namespace App\Nova;
 use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Badge;
+use Laravel\Nova\Fields\Number;
 use Illuminate\Validation\Rules;
-use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\MorphOne;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\UiAvatar;
+use App\Nova\Filters\StatusFilter;
+use App\Nova\Filters\CountryFilter;
+use Laravel\Nova\Fields\BelongsToMany;
+use App\Nova\Relationships\OrderFields;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class User extends Resource
+class Customer extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\User>
+     * @var class-string<\App\Models\Customer>
      */
-    public static $model = \App\Models\User::class;
+    public static $model = \App\Models\Customer::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -65,8 +70,8 @@ class User extends Resource
                 ->creationRules('required', Rules\Password::defaults())
                 ->updateRules('nullable', Rules\Password::defaults()),
 
-            MorphOne::make('Address')
-                ->required(),
+            MorphOne::make('Address'),
+
         ];
     }
 
@@ -89,7 +94,10 @@ class User extends Resource
      */
     public function filters(NovaRequest $request)
     {
-        return [];
+        return [
+            new CountryFilter(),
+            new StatusFilter(),
+        ];
     }
 
     /**

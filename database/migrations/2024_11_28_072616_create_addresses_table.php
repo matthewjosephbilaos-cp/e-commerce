@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customer_product', function (Blueprint $table) {
+        Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained('customers');
-            $table->foreignId('product_id')->constrained('products');
-            $table->integer('quantity');
-            $table->string('status');
+            $table->unsignedBigInteger('addressable_id');
+            $table->string('addressable_type');
+            $table->string('street')->nullable();
+            $table->string('barangay');
+            $table->string('city');
+            $table->string('country');
+            $table->string('postal_code');
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customer_product');
+        Schema::dropIfExists('addresses');
     }
 };

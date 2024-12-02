@@ -2,31 +2,31 @@
 
 namespace App\Nova;
 
+use App\Nova\User;
+use App\Nova\Customer;
+use App\Models\User as UserModel;
+use App\Models\Customer as CustomerModel;
 use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Text;
-use Illuminate\Validation\Rules;
-use Laravel\Nova\Fields\Gravatar;
-use Laravel\Nova\Fields\MorphOne;
-use Laravel\Nova\Fields\Password;
-use Laravel\Nova\Fields\UiAvatar;
+use Laravel\Nova\Fields\MorphTo;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class User extends Resource
+class Address extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\User>
+     * @var class-string<\App\Models\Address>
      */
-    public static $model = \App\Models\User::class;
+    public static $model = \App\Models\Address::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'street';
 
     /**
      * The columns that should be searched.
@@ -34,7 +34,7 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email',
+        'id', 'street', 'barangay', 'city', 'country', 'postal_code',
     ];
 
     /**
@@ -48,28 +48,41 @@ class User extends Resource
         return [
             ID::make()->sortable(),
 
-            UiAvatar::make()->maxWidth(50),
+            MorphTo::make('Addressable')
+                ->types([
+                    Customer::class,
+                    User::class
+                ])->searchable(),
 
-            Text::make('Name')
+            Text::make('Street')
                 ->sortable()
-                ->rules('required', 'max:255'),
+                ->rules('nullable', 'string', 'max:255'),
 
-            Text::make('Email')
+            Text::make('Barangay')
                 ->sortable()
-                ->rules('required', 'email', 'max:254')
-                ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
+                ->rules('required', 'string', 'max:255'),
 
-            Password::make('Password')
-                ->onlyOnForms()
-                ->creationRules('required', Rules\Password::defaults())
-                ->updateRules('nullable', Rules\Password::defaults()),
+            Text::make('City')
+                ->sortable()
+                ->rules('required', 'string', 'max:255'),
 
-            MorphOne::make('Address')
-                ->required(),
+            Text::make('Country')
+                ->sortable()
+                ->rules('required', 'string', 'max:255'),
+
+            Text::make('Postal Code')
+                ->sortable()
+                ->rules('required', 'string', 'max:255'),
         ];
     }
 
+    public function subtitle() {
+        return match ($this->addressable::class) {
+            CustomerModel::class => 'Customer: ' . $this->addressable->name,
+            UserModel::class => 'User: ' . $this->addressable->name,
+            default => null,
+        };
+    }
     /**
      * Get the cards available for the request.
      *
