@@ -2,8 +2,17 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
+use App\Nova\User;
+use App\Nova\Brand;
+use App\Nova\Order;
+use App\Nova\Product;
+use App\Nova\Category;
+use App\Nova\Customer;
 use Laravel\Nova\Nova;
+use Laravel\Nova\Menu\MenuItem;
+use Laravel\Nova\Menu\MenuSection;
+use App\Nova\Lenses\StatusCountLens;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\NovaApplicationServiceProvider;
 
 class NovaServiceProvider extends NovaApplicationServiceProvider
@@ -18,6 +27,30 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         parent::boot();
 
         Nova::withBreadcrumbs();
+
+        Nova::initialPath('/resources/customers');
+
+        Nova::mainMenu(fn ($request) => [
+
+            MenuSection::make('Customers', [
+                MenuItem::resource(Customer::class)
+            ])->icon('user-group')->collapsable(),
+
+            MenuSection::make('Main', [
+                MenuSection::make('Product', [
+                    MenuItem::resource(Product::class),
+                    MenuItem::lens(Product::class, StatusCountLens::class),
+                ])->collapsable(),
+
+                MenuItem::resource(Brand::class),
+                MenuItem::resource(Category::class),
+                MenuItem::resource(Order::class)
+            ])->icon('briefcase')->collapsable(),
+
+            MenuSection::make('Support', [
+                MenuItem::resource(User::class)
+            ])->icon('cog')->collapsable(),
+        ]);
     }
 
     /**
