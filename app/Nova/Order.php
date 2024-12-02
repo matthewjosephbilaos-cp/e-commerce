@@ -6,6 +6,7 @@ use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Order extends Resource
@@ -30,7 +31,7 @@ class Order extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'quantity', 'status'
+        'id', 'quantity', 'status', 'customer.name', 'product.title'
     ];
 
     /**
@@ -44,8 +45,13 @@ class Order extends Resource
         return [
             ID::make()->sortable(),
 
+            BelongsTo::make('Customer')->sortable(),
+
+            BelongsTo::make('Product')->sortable(),
+
             Number::make('Quantity')
-                ->filterable(),
+                ->filterable()
+                ->sortable(),
 
             Select::make('Status')
                 ->options([
@@ -56,6 +62,10 @@ class Order extends Resource
                     'Failed Delivery' => 'Failed Delivery',
                     'Cancelled' => 'Cancelled'
                 ])
+                ->rules('required', 'string')
+                ->filterable(),
+
+
 
         ];
     }
