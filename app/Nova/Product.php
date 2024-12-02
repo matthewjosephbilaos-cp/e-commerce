@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Nova\Customer;
+use Illuminate\Support\Str;
 use Laravel\Nova\Fields\ID;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\URL;
@@ -13,9 +14,11 @@ use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\BelongsTo;
+use App\Nova\Lenses\StatusCountLens;
 use Laravel\Nova\Fields\BelongsToMany;
 use App\Nova\Relationships\OrderFields;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Query\Search\SearchableText;
 
 class Product extends Resource
 {
@@ -33,18 +36,11 @@ class Product extends Resource
      */
     public static $title = 'title';
 
-    /**
-     * The columns that should be searched.
-     *
-     * @var array
-     */
-    public static $search = [
-        'id', 'title', 'brand.title', 'category.title'
-    ];
 
     public static $with = [
         'brand', 'category'
     ];
+
 
     /**
      * Get the fields displayed by the resource.
@@ -72,11 +68,17 @@ class Product extends Resource
                 ->updateRules('unique:products,title,{{resourceId}}'),
 
             BelongsTo::make('Category')
+                ->searchable()
                 ->sortable()
+                ->showCreateRelationButton()
+                ->modalSize('3xl')
                 ->rules('required', 'integer', 'exists:categories,id'),
 
             BelongsTo::make('Brand')
+                ->searchable()
                 ->sortable()
+                ->showCreateRelationButton()
+                ->modalSize('3xl')
                 ->rules('required', 'integer', 'exists:brands,id'),
 
             Trix::make('Description')
@@ -114,6 +116,11 @@ class Product extends Resource
         ];
     }
 
+    public function subtitle()
+    {
+        return Str($this->description)->limit(100);
+    }
+
     /**
      * Get the cards available for the request.
      *
@@ -144,7 +151,9 @@ class Product extends Resource
      */
     public function lenses(NovaRequest $request)
     {
-        return [];
+        return [
+            new StatusCountLens(),
+        ];
     }
 
     /**
