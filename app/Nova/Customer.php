@@ -8,8 +8,11 @@ use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Badge;
 use Laravel\Nova\Fields\Number;
 use Illuminate\Validation\Rules;
+use Laravel\Nova\Fields\MorphOne;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\UiAvatar;
+use App\Nova\Filters\StatusFilter;
+use App\Nova\Filters\CountryFilter;
 use Laravel\Nova\Fields\BelongsToMany;
 use App\Nova\Relationships\OrderFields;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -67,8 +70,7 @@ class Customer extends Resource
                 ->creationRules('required', Rules\Password::defaults())
                 ->updateRules('nullable', Rules\Password::defaults()),
 
-            BelongsToMany::make('Ordered Products', 'productsOrdered', resource: Product::class)
-                ->fields(new OrderFields()),
+            MorphOne::make('Address'),
 
         ];
     }
@@ -92,7 +94,10 @@ class Customer extends Resource
      */
     public function filters(NovaRequest $request)
     {
-        return [];
+        return [
+            new CountryFilter(),
+            new StatusFilter(),
+        ];
     }
 
     /**
