@@ -6,16 +6,18 @@ use App\Models\Brand;
 use App\Models\Order;
 use App\Models\Category;
 use App\Models\Customer;
+use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
 
     protected $fillable = [
+        'id',
         'title',
         'description',
         'quantity',
@@ -41,4 +43,13 @@ class Product extends Model
             ->withPivot(['quantity', 'status']);
     }
 
+    public function toSearchableArray(): array
+    {
+        $array = $this->toArray();
+
+        // Customize the data array...
+
+        unset($array['updated_at']);
+        return $array;
+    }
 }
